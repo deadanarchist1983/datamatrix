@@ -23,7 +23,7 @@ a = Analysis(['app.py'], pathex=[], binaries=binaries, datas=datas,
              runtime_hooks=[], excludes=[], noarchive=False, optimize=0)
 pyz = PYZ(a.pure)
 exe = EXE(pyz, a.scripts, a.binaries, a.datas, [],
-          name='PROJECTZ GS1 DataMatrix 4.0.7.6',
+          name='PROJECTZ GS1 DataMatrix 4.0.7.7',
           version='version_info.txt', debug=False,
           bootloader_ignore_signals=False, strip=False, upx=True,
           upx_exclude=[], runtime_tmpdir=None, console=False,
