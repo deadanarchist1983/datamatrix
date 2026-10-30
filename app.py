@@ -1,6 +1,7 @@
 import base64
 import csv
 import io
+import json
 import math
 import os
 import re
@@ -689,14 +690,17 @@ class App(tk.Tk):
     def __init__(self):
         super().__init__()
         self.title(f"{APP_TITLE} {APP_VERSION}")
-        self.geometry("1080x820")
-        self.minsize(940, 700)
+        self.geometry("1180x820")
+        self.minsize(980, 700)
+        self._restore_window_settings()
+        self.protocol("WM_DELETE_WINDOW", self._close_window)
 
         self.current_code = ""
         self.current_payload = ""
         self.current_symbol: Optional[Image.Image] = None
         self.current_label: Optional[Image.Image] = None
         self.preview_photo = None
+        self._preview_resize_job = None
         self.batch_items: List[BatchItem] = []
         self.batch_source = ""
 
@@ -735,6 +739,51 @@ class App(tk.Tk):
         self._build_single_tab()
         self._build_batch_tab()
         self._build_help_tab()
+
+    def _window_settings_path(self) -> Path:
+        settings_root = Path(os.environ.get("APPDATA", Path.home()))
+        return settings_root / "PROJECTZ GS1 DataMatrix" / "window.json"
+
+    def _restore_window_settings(self):
+        path = self._window_settings_path()
+        try:
+            settings = json.loads(path.read_text(encoding="utf-8"))
+            geometry = settings.get("geometry")
+            match = re.fullmatch(r"(\d+)x(\d+)([+-]\d+)([+-]\d+)", str(geometry or ""))
+            if match:
+                width, height, x, y = (int(value) for value in match.groups())
+                width = max(width, 980)
+                height = max(height, 700)
+                screen_width = self.winfo_screenwidth()
+                screen_height = self.winfo_screenheight()
+                if x + 120 < 0 or y + 120 < 0 or x > screen_width - 40 or y > screen_height - 40:
+                    x, y = 20, 20
+                self.geometry(f"{width}x{height}{x:+d}{y:+d}")
+            if settings.get("maximized") is True:
+                self.after_idle(lambda: self.state("zoomed"))
+        except (OSError, ValueError, TypeError, json.JSONDecodeError):
+            pass
+
+    def _save_window_settings(self):
+        path = self._window_settings_path()
+        try:
+            path.parent.mkdir(parents=True, exist_ok=True)
+            payload = {
+                "geometry": self.geometry(),
+                "maximized": self.state() == "zoomed",
+            }
+            temporary_path = path.with_suffix(".tmp")
+            temporary_path.write_text(
+                json.dumps(payload, ensure_ascii=False, indent=2),
+                encoding="utf-8",
+            )
+            temporary_path.replace(path)
+        except OSError:
+            pass
+
+    def _close_window(self):
+        self._save_window_settings()
+        self.destroy()
 
     def _settings_frame(self, parent):
         frame = ttk.LabelFrame(parent, text="Параметры этикетки", padding=8)
@@ -798,6 +847,7 @@ class App(tk.Tk):
         right = ttk.LabelFrame(body, text="Предпросмотр", padding=10)
         body.add(left, weight=3)
         body.add(right, weight=2)
+        right.configure(padding=6)
 
         ttk.Label(left, text="Код маркировки", style="Section.TLabel").pack(anchor="w")
         self.code_text = tk.Text(left, height=8, wrap="word", font=("Consolas", 10))
@@ -850,6 +900,7 @@ class App(tk.Tk):
 
         self.preview_label = ttk.Label(right, anchor="center")
         self.preview_label.pack(fill="both", expand=True)
+        self.preview_label.bind("<Configure>", self._schedule_preview_render)
         self.single_status = ttk.Label(right, text="Готово к работе.", wraplength=380)
         self.single_status.pack(fill="x", pady=(8, 0))
 
@@ -1018,6 +1069,31 @@ class App(tk.Tk):
         ):
             widget.configure(state=state)
 
+    def _schedule_preview_render(self, _event=None):
+        if self.current_label is None:
+            return
+        if self._preview_resize_job is not None:
+            self.after_cancel(self._preview_resize_job)
+        self._preview_resize_job = self.after(40, self._render_preview)
+
+    def _render_preview(self):
+        self._preview_resize_job = None
+        if self.current_label is None:
+            return
+        available_width = self.preview_label.winfo_width() - 12
+        available_height = self.preview_label.winfo_height() - 12
+        if available_width <= 1 or available_height <= 1:
+            self._preview_resize_job = self.after_idle(self._render_preview)
+            return
+
+        preview = ImageOps.contain(
+            self.current_label,
+            (available_width, available_height),
+            method=Image.Resampling.NEAREST,
+        )
+        self.preview_photo = ImageTk.PhotoImage(preview)
+        self.preview_label.configure(image=self.preview_photo)
+
     def get_label_settings(self):
         width = float(self.width_var.get())
         height = float(self.height_var.get())
@@ -1073,10 +1149,7 @@ class App(tk.Tk):
             ])
             self._set_validation("\n".join(report))
 
-            preview = label.copy()
-            preview.thumbnail((430, 520), Image.Resampling.NEAREST)
-            self.preview_photo = ImageTk.PhotoImage(preview)
-            self.preview_label.configure(image=self.preview_photo)
+            self._schedule_preview_render()
             self._set_export_state(True)
             self.single_status.configure(text="Создано и проверено успешно.")
         except Exception as exc:
