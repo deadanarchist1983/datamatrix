@@ -11,6 +11,16 @@ Set-Location $repoRoot
 
 Все пути внутри команд строятся от `$repoRoot` через `Join-Path`.
 
+На текущем рабочем компьютере можно быстро перейти к проекту через переменную профиля Windows:
+
+```powershell
+$projectHint = Join-Path $env:USERPROFILE 'Seafile\PROJECTZ\TNVED\PROJECTZ GS1 DataMatrix'
+Set-Location $projectHint
+$repoRoot = (git rev-parse --show-toplevel).Trim()
+```
+
+`$projectHint` — только локальная подсказка. Источником истины остаётся путь, который вернул Git.
+
 Проверка подключения к GitHub:
 
 ```powershell
