@@ -709,29 +709,208 @@ class App(tk.Tk):
 
     def _setup_style(self):
         style = ttk.Style(self)
-        if "vista" in style.theme_names():
-            style.theme_use("vista")
-        style.configure("Title.TLabel", font=("Segoe UI", 17, "bold"))
-        style.configure("Section.TLabel", font=("Segoe UI", 11, "bold"))
-        style.configure("Success.TLabel", foreground="#12833B")
-        style.configure("Error.TLabel", foreground="#B42318")
+        # The native Vista theme ignores most custom colors.  Clam keeps the
+        # familiar ttk controls while allowing a restrained Fluent-like palette
+        # to be applied consistently across the application.
+        if "clam" in style.theme_names():
+            style.theme_use("clam")
+
+        self._colors = {
+            "background": "#F7F8FA",
+            "surface": "#FFFFFF",
+            "border": "#D9E0E7",
+            "text": "#202124",
+            "muted": "#5F6B7A",
+            "accent": "#0F6CBD",
+            "accent_active": "#115EA3",
+            "success": "#107C10",
+            "success_surface": "#F0FAF0",
+            "error": "#C42B1C",
+            "error_surface": "#FFF4F2",
+        }
+        self.configure(background=self._colors["background"])
+
+        style.configure("App.TFrame", background=self._colors["background"])
+        style.configure("Surface.TFrame", background=self._colors["surface"])
+        style.configure("Toolbar.TFrame", background=self._colors["background"])
+        style.configure(
+            "Title.TLabel",
+            background=self._colors["background"],
+            foreground=self._colors["text"],
+            font=("Segoe UI", 22, "bold"),
+        )
+        style.configure(
+            "Subtitle.TLabel",
+            background=self._colors["background"],
+            foreground=self._colors["muted"],
+            font=("Segoe UI", 10),
+        )
+        style.configure(
+            "Brand.TLabel",
+            background=self._colors["accent"],
+            foreground="#FFFFFF",
+            font=("Segoe UI", 11, "bold"),
+            padding=(10, 7),
+        )
+        style.configure(
+            "Version.TLabel",
+            background=self._colors["background"],
+            foreground=self._colors["muted"],
+            font=("Segoe UI", 9),
+        )
+        style.configure(
+            "Section.TLabel",
+            background=self._colors["background"],
+            foreground=self._colors["text"],
+            font=("Segoe UI", 11, "bold"),
+        )
+        style.configure(
+            "Muted.TLabel",
+            background=self._colors["background"],
+            foreground=self._colors["muted"],
+            font=("Segoe UI", 9),
+        )
+        style.configure(
+            "SurfaceSection.TLabel",
+            background=self._colors["surface"],
+            foreground=self._colors["text"],
+            font=("Segoe UI", 10, "bold"),
+        )
+        style.configure(
+            "Card.TLabelframe",
+            background=self._colors["surface"],
+            bordercolor=self._colors["border"],
+            relief="solid",
+            borderwidth=1,
+            padding=10,
+        )
+        style.configure(
+            "Card.TLabelframe.Label",
+            background=self._colors["surface"],
+            foreground=self._colors["text"],
+            font=("Segoe UI", 10, "bold"),
+        )
+        style.configure(
+            "Primary.TButton",
+            background=self._colors["accent"],
+            foreground="#FFFFFF",
+            bordercolor=self._colors["accent"],
+            lightcolor=self._colors["accent"],
+            darkcolor=self._colors["accent"],
+            padding=(15, 8),
+            font=("Segoe UI", 10, "bold"),
+        )
+        style.map(
+            "Primary.TButton",
+            background=[
+                ("pressed", self._colors["accent_active"]),
+                ("active", self._colors["accent_active"]),
+                ("disabled", "#B9C7D6"),
+            ],
+            foreground=[("disabled", "#F5F7FA")],
+        )
+        style.configure(
+            "Secondary.TButton",
+            background=self._colors["surface"],
+            foreground=self._colors["text"],
+            bordercolor=self._colors["border"],
+            padding=(11, 7),
+            font=("Segoe UI", 10),
+        )
+        style.map(
+            "Secondary.TButton",
+            background=[("active", "#EEF4FB"), ("pressed", "#E5EFFA")],
+        )
+        style.configure(
+            "Status.TFrame",
+            background="#EEF4FB",
+            bordercolor="#C7DDF5",
+            relief="solid",
+            borderwidth=1,
+        )
+        style.configure(
+            "Status.TLabel",
+            background="#EEF4FB",
+            foreground=self._colors["text"],
+            font=("Segoe UI", 10),
+        )
+        style.configure(
+            "Treeview",
+            background=self._colors["surface"],
+            fieldbackground=self._colors["surface"],
+            foreground=self._colors["text"],
+            rowheight=28,
+            bordercolor=self._colors["border"],
+            lightcolor=self._colors["border"],
+            darkcolor=self._colors["border"],
+        )
+        style.map("Treeview", background=[("selected", "#DCEBFA")])
+        style.configure(
+            "Treeview.Heading",
+            background="#EEF2F6",
+            foreground=self._colors["text"],
+            font=("Segoe UI", 9, "bold"),
+            padding=(8, 7),
+        )
+        style.configure(
+            "TNotebook",
+            background=self._colors["background"],
+            borderwidth=0,
+        )
+        style.configure(
+            "TNotebook.Tab",
+            background="#E9EEF3",
+            foreground=self._colors["muted"],
+            padding=(16, 8),
+            font=("Segoe UI", 10),
+        )
+        style.map(
+            "TNotebook.Tab",
+            background=[("selected", self._colors["surface"])],
+            foreground=[("selected", self._colors["accent"])],
+        )
+        style.configure(
+            "TEntry",
+            fieldbackground=self._colors["surface"],
+            foreground=self._colors["text"],
+            padding=(7, 6),
+        )
+        style.configure(
+            "TCombobox",
+            fieldbackground=self._colors["surface"],
+            foreground=self._colors["text"],
+            padding=(5, 5),
+        )
 
     def _build_ui(self):
-        root = ttk.Frame(self, padding=12)
+        root = ttk.Frame(self, padding=18, style="App.TFrame")
         root.pack(fill="both", expand=True)
 
-        ttk.Label(root, text="PROJECTZ GS1 DataMatrix", style="Title.TLabel").pack(anchor="w")
+        header = ttk.Frame(root, style="App.TFrame")
+        header.pack(fill="x", pady=(0, 14))
+        brand = ttk.Frame(header, style="App.TFrame")
+        brand.pack(side="left", fill="y")
+        ttk.Label(brand, text="GS1", style="Brand.TLabel").pack(side="left", padx=(0, 12))
+        title_block = ttk.Frame(brand, style="App.TFrame")
+        title_block.pack(side="left", anchor="w")
+        ttk.Label(title_block, text="PROJECTZ GS1 DataMatrix", style="Title.TLabel").pack(anchor="w")
         ttk.Label(
-            root,
-            text="Структура Честного Знака зафиксирована: {FNC1}01…21…{GS}91…{GS}92…",
-        ).pack(anchor="w", pady=(0, 10))
+            title_block,
+            text="Создание и проверка кодов маркировки «Честный Знак»",
+            style="Subtitle.TLabel",
+        ).pack(anchor="w", pady=(2, 0))
+        ttk.Label(
+            header,
+            text=f"Версия {APP_VERSION.split(' — ', 1)[0]}",
+            style="Version.TLabel",
+        ).pack(side="right", anchor="center")
 
         notebook = ttk.Notebook(root)
         notebook.pack(fill="both", expand=True)
 
-        self.single_tab = ttk.Frame(notebook, padding=10)
-        self.batch_tab = ttk.Frame(notebook, padding=10)
-        self.help_tab = ttk.Frame(notebook, padding=10)
+        self.single_tab = ttk.Frame(notebook, padding=12, style="App.TFrame")
+        self.batch_tab = ttk.Frame(notebook, padding=12, style="App.TFrame")
+        self.help_tab = ttk.Frame(notebook, padding=12, style="App.TFrame")
         notebook.add(self.single_tab, text="Один код")
         notebook.add(self.batch_tab, text="Пакетная генерация")
         notebook.add(self.help_tab, text="Проверка и справка")
@@ -786,7 +965,7 @@ class App(tk.Tk):
         self.destroy()
 
     def _settings_frame(self, parent):
-        frame = ttk.LabelFrame(parent, text="Параметры этикетки", padding=8)
+        frame = ttk.LabelFrame(parent, text="Параметры этикетки", style="Card.TLabelframe", padding=10)
 
         ttk.Label(frame, text="Размер:").grid(row=0, column=0, sticky="w")
         preset = ttk.Combobox(
@@ -838,75 +1017,148 @@ class App(tk.Tk):
 
     def _build_single_tab(self):
         settings = self._settings_frame(self.single_tab)
-        settings.pack(fill="x", pady=(0, 8))
+        settings.pack(fill="x", pady=(0, 12))
 
         body = ttk.Panedwindow(self.single_tab, orient="horizontal")
         body.pack(fill="both", expand=True)
 
-        left = ttk.Frame(body, padding=(0, 0, 8, 0))
-        right = ttk.LabelFrame(body, text="Предпросмотр", padding=10)
+        left = ttk.Frame(body, padding=(0, 0, 12, 0), style="App.TFrame")
+        right = ttk.LabelFrame(body, text="Предпросмотр", style="Card.TLabelframe", padding=10)
         body.add(left, weight=3)
         body.add(right, weight=2)
         right.configure(padding=6)
 
         ttk.Label(left, text="Код маркировки", style="Section.TLabel").pack(anchor="w")
-        self.code_text = tk.Text(left, height=8, wrap="word", font=("Consolas", 10))
-        self.code_text.pack(fill="x", pady=(4, 8))
+        ttk.Label(
+            left,
+            text="Вставьте код GS1 DataMatrix или отредактируйте пример ниже.",
+            style="Muted.TLabel",
+        ).pack(anchor="w", pady=(2, 4))
+        self.code_text = tk.Text(
+            left,
+            height=8,
+            wrap="word",
+            font=("Consolas", 10),
+            background=self._colors["surface"],
+            foreground=self._colors["text"],
+            insertbackground=self._colors["accent"],
+            selectbackground="#C7DDF5",
+            selectforeground=self._colors["text"],
+            highlightthickness=1,
+            highlightbackground=self._colors["border"],
+            highlightcolor=self._colors["accent"],
+            relief="flat",
+            padx=9,
+            pady=8,
+        )
+        self.code_text.pack(fill="x", pady=(0, 10))
         self.code_text.insert("1.0", DEFAULT_CODE)
 
         ttk.Label(left, text="Подпись на этикетке").pack(anchor="w")
         self.caption_var = tk.StringVar()
-        ttk.Entry(left, textvariable=self.caption_var).pack(fill="x", pady=(4, 8))
+        ttk.Entry(left, textvariable=self.caption_var).pack(fill="x", pady=(4, 12))
 
-        actions = ttk.Frame(left)
-        actions.pack(fill="x")
-        ttk.Button(actions, text="Создать и проверить", command=self.generate_single).pack(side="left")
-        ttk.Button(actions, text="Вставить", command=self.paste_code).pack(side="left", padx=6)
-        ttk.Button(actions, text="Очистить", command=self.clear_single).pack(side="left")
+        actions = ttk.Frame(left, style="Toolbar.TFrame")
+        actions.pack(fill="x", pady=(0, 2))
+        ttk.Button(
+            actions,
+            text="Создать и проверить",
+            command=self.generate_single,
+            style="Primary.TButton",
+        ).pack(side="left")
+        ttk.Button(
+            actions,
+            text="Вставить",
+            command=self.paste_code,
+            style="Secondary.TButton",
+        ).pack(side="left", padx=(8, 0))
+        ttk.Button(
+            actions,
+            text="Очистить",
+            command=self.clear_single,
+            style="Secondary.TButton",
+        ).pack(side="left", padx=(8, 0))
 
-        export = ttk.LabelFrame(left, text="Экспорт", padding=8)
-        export.pack(fill="x", pady=10)
-        self.save_png_btn = ttk.Button(export, text="PNG", command=self.save_png, state="disabled")
-        self.save_pdf_btn = ttk.Button(export, text="PDF 1 этикетка", command=self.save_single_pdf, state="disabled")
-        self.save_zpl_btn = ttk.Button(export, text="ZPL", command=self.save_zpl, state="disabled")
+        export = ttk.LabelFrame(left, text="Экспорт результата", style="Card.TLabelframe", padding=10)
+        export.pack(fill="x", pady=(12, 10))
+        file_actions = ttk.Frame(export, style="Surface.TFrame")
+        file_actions.pack(fill="x", pady=(0, 7))
+        self.save_png_btn = ttk.Button(
+            file_actions, text="PNG", command=self.save_png, state="disabled", style="Secondary.TButton"
+        )
+        self.save_pdf_btn = ttk.Button(
+            file_actions, text="PDF", command=self.save_single_pdf, state="disabled", style="Secondary.TButton"
+        )
+        self.save_zpl_btn = ttk.Button(
+            file_actions, text="ZPL", command=self.save_zpl, state="disabled", style="Secondary.TButton"
+        )
         self.copy_structure_btn = ttk.Button(
-            export,
-            text="Копировать для просмотра",
+            file_actions,
+            text="Копировать структуру",
             command=self.copy_structure,
             state="disabled",
+            style="Secondary.TButton",
         )
         self.copy_raw_btn = ttk.Button(
-            export,
+            file_actions,
             text="Копировать настоящий код",
             command=self.copy_raw_code,
             state="disabled",
+            style="Secondary.TButton",
         )
-        for widget in (
-            self.save_png_btn,
-            self.save_pdf_btn,
-            self.save_zpl_btn,
-            self.copy_structure_btn,
-            self.copy_raw_btn,
-        ):
+        for widget in (self.save_png_btn, self.save_pdf_btn, self.save_zpl_btn):
             widget.pack(side="left", padx=(0, 7))
+        self.copy_structure_btn.pack(side="left", padx=(0, 7))
+        self.copy_raw_btn.pack(side="left")
 
-        validation = ttk.LabelFrame(left, text="Контроль", padding=8)
-        validation.pack(fill="both", expand=True)
-        self.validation_text = tk.Text(
-            validation, height=11, wrap="word", state="disabled",
-            font=("Consolas", 9)
+        validation = ttk.Frame(left, style="Surface.TFrame", padding=10)
+        validation.pack(fill="both", expand=True, pady=(0, 0))
+        ttk.Label(
+            validation,
+            text="Результат проверки",
+            style="SurfaceSection.TLabel",
+        ).pack(anchor="w", pady=(0, 6))
+        self.validation_text = tk.Label(
+            validation,
+            text="",
+            anchor="nw",
+            justify="left",
+            wraplength=560,
+            font=("Consolas", 9),
+            background=self._colors["surface"],
+            foreground=self._colors["text"],
+            padx=10,
+            pady=10,
+            relief="solid",
+            borderwidth=1,
+            highlightthickness=0,
         )
         self.validation_text.pack(fill="both", expand=True)
+        self.validation_text.bind(
+            "<Configure>",
+            lambda event: self.validation_text.configure(wraplength=max(240, event.width - 20)),
+        )
 
-        self.preview_label = ttk.Label(right, anchor="center")
+        self.preview_label = ttk.Label(
+            right,
+            anchor="center",
+            background="#F1F4F7",
+        )
         self.preview_label.pack(fill="both", expand=True)
         self.preview_label.bind("<Configure>", self._schedule_preview_render)
-        self.single_status = ttk.Label(right, text="Готово к работе.", wraplength=380)
-        self.single_status.pack(fill="x", pady=(8, 0))
+        status_frame = ttk.Frame(right, style="Status.TFrame", padding=(10, 8))
+        status_frame.pack(fill="x", pady=(8, 0))
+        self.single_status = ttk.Label(
+            status_frame,
+            text="Готово к работе.",
+            wraplength=380,
+            style="Status.TLabel",
+        )
+        self.single_status.pack(fill="x")
 
     def _build_batch_tab(self):
-        self._settings_frame(self.batch_tab).pack(fill="x", pady=(0, 8))
-        pdf_mode = ttk.Frame(self.batch_tab)
+        self._settings_frame(self.batch_tab).pack(fill="x", pady=(0, 12))
+        pdf_mode = ttk.Frame(self.batch_tab, style="Toolbar.TFrame")
         pdf_mode.pack(fill="x", pady=(0, 8))
         ttk.Label(pdf_mode, text="Страницы PDF:").pack(side="left")
         self.pdf_mode_var = tk.StringVar(value="Сетка на A4")
@@ -915,12 +1167,32 @@ class App(tk.Tk):
             values=("Сетка на A4", "Одна этикетка на A4",
                     "Одна этикетка — страница по размеру"),
         ).pack(side="left", padx=8)
-        settings = ttk.LabelFrame(self.batch_tab, text="Пакетный экспорт", padding=8)
+        settings = ttk.LabelFrame(
+            self.batch_tab,
+            text="Пакетный экспорт",
+            style="Card.TLabelframe",
+            padding=10,
+        )
         settings.pack(fill="x", pady=(0, 8))
 
-        ttk.Button(settings, text="Открыть XLSX/CSV", command=self.load_batch).pack(side="left")
-        ttk.Button(settings, text="Скачать шаблон XLSX", command=self.save_template).pack(side="left", padx=6)
-        ttk.Button(settings, text="Проверить все", command=self.validate_batch).pack(side="left")
+        ttk.Button(
+            settings,
+            text="Открыть XLSX/CSV",
+            command=self.load_batch,
+            style="Primary.TButton",
+        ).pack(side="left")
+        ttk.Button(
+            settings,
+            text="Скачать шаблон XLSX",
+            command=self.save_template,
+            style="Secondary.TButton",
+        ).pack(side="left", padx=8)
+        ttk.Button(
+            settings,
+            text="Проверить все",
+            command=self.validate_batch,
+            style="Secondary.TButton",
+        ).pack(side="left")
 
         ttk.Separator(settings, orient="vertical").pack(side="left", fill="y", padx=10)
 
@@ -935,11 +1207,22 @@ class App(tk.Tk):
         )
         self.pdf_position_box.pack(side="left", padx=(5, 10))
 
-        ttk.Button(settings, text="PNG в папку", command=self.export_batch_png).pack(side="left", padx=(0, 6))
-        ttk.Button(settings, text="Сохранить PDF", command=self.export_batch_pdf).pack(side="left")
-        ttk.Button(settings, text="ZPL в папку", command=self.export_batch_zpl).pack(side="left", padx=6)
+        ttk.Button(
+            settings, text="PNG в папку", command=self.export_batch_png, style="Secondary.TButton"
+        ).pack(side="left", padx=(0, 6))
+        ttk.Button(
+            settings, text="Сохранить PDF", command=self.export_batch_pdf, style="Secondary.TButton"
+        ).pack(side="left")
+        ttk.Button(
+            settings, text="ZPL в папку", command=self.export_batch_zpl, style="Secondary.TButton"
+        ).pack(side="left", padx=6)
 
-        pdf_layout = ttk.LabelFrame(self.batch_tab, text="Раскладка PDF A4", padding=8)
+        pdf_layout = ttk.LabelFrame(
+            self.batch_tab,
+            text="Раскладка PDF A4",
+            style="Card.TLabelframe",
+            padding=10,
+        )
         pdf_layout.pack(fill="x", pady=(0, 8))
 
         ttk.Label(pdf_layout, text="Поля листа, мм:").pack(side="left")
@@ -969,7 +1252,7 @@ class App(tk.Tk):
             text="Заполнение: слева направо, сверху вниз",
         ).pack(side="left")
 
-        table_frame = ttk.Frame(self.batch_tab)
+        table_frame = ttk.Frame(self.batch_tab, style="App.TFrame")
         table_frame.pack(fill="both", expand=True)
         columns = ("row", "gtin", "serial", "caption", "filename", "status")
         self.batch_tree = ttk.Treeview(table_frame, columns=columns, show="headings")
@@ -996,7 +1279,21 @@ class App(tk.Tk):
         self.batch_status.pack(fill="x", pady=(8, 0))
 
     def _build_help_tab(self):
-        text = tk.Text(self.help_tab, wrap="word", font=("Segoe UI", 10))
+        text = tk.Text(
+            self.help_tab,
+            wrap="word",
+            font=("Segoe UI", 10),
+            background=self._colors["surface"],
+            foreground=self._colors["text"],
+            insertbackground=self._colors["accent"],
+            highlightthickness=1,
+            highlightbackground=self._colors["border"],
+            highlightcolor=self._colors["accent"],
+            relief="flat",
+            padx=14,
+            pady=14,
+        )
+        self._make_readonly_text(text)
         text.pack(fill="both", expand=True)
         text.insert(
             "1.0",
@@ -1026,9 +1323,29 @@ class App(tk.Tk):
 
 Формат XLSX/CSV:
 Код маркировки | Подпись | Имя файла
+
+О ПРОГРАММЕ
+Разработчик: deadanarchist1983
+Создано совместно с OpenAI Codex
+Исходный код: github.com/deadanarchist1983/datamatrix
 """
         )
-        text.configure(state="disabled")
+    @staticmethod
+    def _readonly_text_key(event):
+        """Keep Text selectable/copyable while blocking content changes."""
+        if event.state & 0x0004 and event.keysym.lower() in {"a", "c"}:
+            return None
+        if event.keysym in {
+            "Left", "Right", "Up", "Down", "Home", "End", "Prior", "Next",
+        }:
+            return None
+        return "break"
+
+    def _make_readonly_text(self, widget):
+        widget.configure(takefocus=0)
+        widget.bind("<KeyPress>", self._readonly_text_key)
+        widget.bind("<<Paste>>", lambda _event: "break")
+        widget.bind("<<Cut>>", lambda _event: "break")
 
     def paste_code(self):
         try:
@@ -1053,10 +1370,7 @@ class App(tk.Tk):
         self.single_status.configure(text="Поле очищено.")
 
     def _set_validation(self, text: str):
-        self.validation_text.configure(state="normal")
-        self.validation_text.delete("1.0", "end")
-        self.validation_text.insert("1.0", text)
-        self.validation_text.configure(state="disabled")
+        self.validation_text.configure(text=text)
 
     def _set_export_state(self, enabled: bool):
         state = "normal" if enabled else "disabled"
