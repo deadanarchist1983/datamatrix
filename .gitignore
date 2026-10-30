@@ -1,0 +1,33 @@
+# Generated Python files and caches
+__pycache__/
+*.py[cod]
+
+# Local Python environments and installers
+venv/
+.build*/
+.python38-win7/
+python-*.exe
+python-install.log
+
+# Build outputs and temporary QA artifacts
+build/
+dist/
+tmp/
+
+# Legacy Win7 toolchain (Windows 7 support discontinued)
+build_win7_exe.bat
+hooks-win7/
+wheelhouse-win7/
+requirements-win7.txt
+*Win7.spec
+
+# Legacy source snapshots and old release specs
+app.py_
+app.py.pre-*
+PROJECTZ GS1 DataMatrix 4.0.7.1.spec
+PROJECTZ GS1 DataMatrix 4.0.7.2.spec
+PROJECTZ GS1 DataMatrix 4.0.7.3.spec
+PROJECTZ GS1 DataMatrix 4.0.7.4.spec
+
+# Legacy Tcl/Tk bundle; current PyInstaller build does not reference it
+tcl_runtime/

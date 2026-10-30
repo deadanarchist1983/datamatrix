@@ -1,0 +1,7 @@
+numpy
+Pillow
+treepoem
+zxing-cpp
+openpyxl
+reportlab
+pyinstaller
