@@ -1,4 +1,4 @@
-PROJECTZ GS1 DataMatrix 4.0.7.3
+PROJECTZ GS1 DataMatrix 4.0.7.5
 
 Исправлена ошибка запуска:
 

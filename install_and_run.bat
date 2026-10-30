@@ -1,10 +1,10 @@
 @echo off
 setlocal EnableExtensions
 cd /d "%~dp0"
-title PROJECTZ GS1 DataMatrix 4.0.7.1 - Setup and Run
+title PROJECTZ GS1 DataMatrix 4.0.7.5 - Setup and Run
 
 echo ============================================================
-echo PROJECTZ GS1 DataMatrix 4.0.7.1
+echo PROJECTZ GS1 DataMatrix 4.0.7.5
 echo ============================================================
 echo.
 
