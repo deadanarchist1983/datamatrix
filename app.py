@@ -65,7 +65,7 @@ treepoem.subprocess = _HiddenSubprocessProxy()
 
 
 APP_TITLE = "PROJECTZ GS1 DataMatrix — Честный Знак"
-APP_VERSION = "4.0.7.5 — пакетные этикетки 100 × 73 мм"
+APP_VERSION = "4.0.7.6 — пакетные этикетки 100 × 73 мм"
 GS = "\x1d"
 
 # ВАЖНО: структура зафиксирована и не должна изменяться:

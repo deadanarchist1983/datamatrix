@@ -54,7 +54,7 @@ git log -3 --oneline --decorate
 ```powershell
 $repoRoot = (git rev-parse --show-toplevel).Trim()
 $python = Join-Path $repoRoot '.build311fresh\Scripts\python.exe'
-$spec = Join-Path $repoRoot 'PROJECTZ GS1 DataMatrix 4.0.7.5.spec'
+$spec = Join-Path $repoRoot 'PROJECTZ GS1 DataMatrix 4.0.7.6.spec'
 
 & $python -m PyInstaller --noconfirm --clean $spec
 ```

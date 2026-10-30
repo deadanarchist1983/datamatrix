@@ -1,7 +1,7 @@
 @echo off
 setlocal EnableExtensions
 cd /d "%~dp0"
-title PROJECTZ GS1 DataMatrix 4.0.7.5 - Build EXE
+title PROJECTZ GS1 DataMatrix 4.0.7.6 - Build EXE
 
 echo ============================================================
 echo BUILD ONE EXE
@@ -17,13 +17,13 @@ if not exist ".build311fresh\Scripts\python.exe" (
 
 
 ".build311fresh\Scripts\python.exe" -m PyInstaller ^
-  --noconfirm --clean "PROJECTZ GS1 DataMatrix 4.0.7.5.spec"
+  --noconfirm --clean "PROJECTZ GS1 DataMatrix 4.0.7.6.spec"
 
 if errorlevel 1 goto ERROR
 
 echo.
 echo EXE created:
-echo %CD%\dist\PROJECTZ GS1 DataMatrix 4.0.7.5.exe
+echo %CD%\dist\PROJECTZ GS1 DataMatrix 4.0.7.6.exe
 pause
 exit /b 0
 
